@@ -17,17 +17,19 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManage
 choco
 ```
 #### check if required tools are installed
-- check git
-- check nodejs
-- check composer
-- check symfony-cli
+- git
+- nodejs
+- composer
+- symfony-cli
+- docker
 
-if not found then
+if not found then install what you need with choco:
 ```powershell
 choco install composer
 choco install git
 choco install nodejs
 choco install symfony-cli
+choco install docker-desktop
 ```
 
 ### Linux
@@ -49,24 +51,34 @@ cd backend/
 ```
 composer install
 ```
-
+```
+symfony server:start --port=80
+```
+API requests should be done are as followed: *localhost/api/{your query}*
 #### Frontend
 ```
 cd frontend/
 ```
 
-or ```cd ../frontend``` if you were in ```backend/``` directory and vise versa
+or ```cd ../frontend``` if you were in ```backend/``` directory and vice versa
 ```
 npm run dev
 ```
 
 ---
 
-## Docker
-// TODO
+## Docker Run (dev)
+### In project root run the following:
+```angular2html
+docker compose up --build
+```
+docker should build and run all the containers, and you should be able to see the page at the ```localhost```.
+API requests are forwarded automatically through nginx (API requests will look like this: *localhost/api/{query}*), but backend is running at the port 9000.
+
+Hot-reloading in docker is only configured for php right now.
 
 ## nginx proxy
-// TODO
+- supported in docker
 
 ## Makefile
 // TODO
