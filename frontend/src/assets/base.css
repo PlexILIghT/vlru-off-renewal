@@ -47,6 +47,7 @@ body {
   border: none;
   display: inline-flex;
   gap: 8px;
+  text-decoration: none;
 }
 
 .btn-outline {

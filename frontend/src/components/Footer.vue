@@ -6,31 +6,31 @@
           <h3>Разделы</h3>
           <ul class="footer-links">
             <li><a href="#">Главная</a></li>
-            <li><a href="#">Показания счетчикоыв</a></li>
-            <li><a href="#">Уведомления об отключениях на мобилььный</a></li>
-            <li><a href="#">Управляющие организации Владивостока</a></li>
-            <li><a href="#">Посты</a></li>
+            <li><a href="https://www.vl.ru/off/o/" target="_blank">Показания счетчикоыв</a></li>
+            <li><a href="https://www.vl.ru/off/o/" target="_blank">Уведомления об отключениях на мобилььный</a></li>
+            <li><a href="https://www.vl.ru/off/companies" target="_blank">Управляющие организации Владивостока</a></li>
+            <li><a href="https://www.vl.ru/off/interviews" target="_blank">Посты</a></li>
           </ul>
         </div>
 
         <div class="footer-column">
           <h3>Сайты Владивостока</h3>
           <ul class="footer-links">
-            <li><a href="#">Авто</a></li>
-            <li><a href="#">Кино</a></li>
-            <li><a href="#">Недвижимость</a></li>
-            <li><a href="#">Новости</a></li>
-            <li><a href="#">объявления</a></li>
-            <li><a href="#">Работа</a></li>
-            <li><a href="#">Справочник компаний</a></li>
+            <li><a href="https://www.drom.ru/" target="_blank">Авто</a></li>
+            <li><a href="https://kino.vl.ru/" target="_blank">Кино</a></li>
+            <li><a href="https://www.farpost.ru/realty/" target="_blank">Недвижимость</a></li>
+            <li><a href="https://newsvl.ru/" target="_blank">Новости</a></li>
+            <li><a href="https://www.farpost.ru/" target="_blank">Объявления</a></li>
+            <li><a href="https://www.farpost.ru/job/" target="_blank">Работа</a></li>
+            <li><a href="https://www.vl.ru/spravochnik" target="_blank">Справочник компаний</a></li>
           </ul>
         </div>
 
         <div class="footer-column">
           <h3>Информация</h3>
           <ul class="footer-links">
-            <li><a href="#">Вакансии</a></li>
-            <li><a href="#">Контакты</a></li>
+            <li><a href="https://www.farpost.ru/job/vacancy/" target="_blank">Вакансии</a></li>
+            <li><a href="https://www.vl.ru/contacts" target="_blank">Контакты</a></li>
             <li>
               По вопросам, предложениям или ошибкам пишите на почту:
               <a id="mail" href="https://www.vl.ru/off/#">off@vl.ru</a>

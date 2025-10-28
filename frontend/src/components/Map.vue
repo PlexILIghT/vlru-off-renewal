@@ -4,8 +4,8 @@
       <h2 class="section-title">Карта отключений</h2>
       <div class="map-container">
         <div class="map-placeholder">
-          <i class="fas fa-map-marked-alt"></i>
-          <p>Интерактивная карта отключений</p>
+          <iframe src="https://www.vl.ru/off/map/common?stop-fullscreen-on-mobile=1&iframe="
+            title="Карта отключений Владивостока"></iframe>
         </div>
       </div>
     </div>
@@ -14,7 +14,7 @@
 
 <style scoped>
 .section {
-  padding: 80px 0;
+  padding: 20px 0 80px 0;
 }
 
 .section-title {
@@ -30,10 +30,9 @@
 
 .map-container {
   height: 400px;
-  background: var(--light-gray);
   border-radius: var(--border-radius);
   overflow: hidden;
-  position: relative;
+  background: var(--light-gray);
 }
 
 .map-placeholder {
@@ -45,9 +44,70 @@
   color: var(--gray);
 }
 
-.map-placeholder i {
-  font-size: 4rem;
-  margin-bottom: 20px;
-  opacity: 0.5;
+iframe {
+  height: 100%;
+  width: 100%;
+  border-radius: var(--border-radius);
+  border: none;
+  display: block;
+}
+
+@media (max-width: 800px) {
+  .section {
+    padding: 60px 0;
+  }
+
+  .section-title {
+    margin-bottom: 30px;
+    font-size: 1.7rem;
+  }
+
+  .map-container {
+    height: 350px;
+    border-radius: 12px;
+  }
+}
+
+@media (max-width: 600px) {
+  .section {
+    padding: 40px 0;
+  }
+
+  .section-title {
+    margin-bottom: 25px;
+    font-size: 1.5rem;
+  }
+
+  .map-container {
+    height: 300px;
+    border-radius: 8px;
+    margin: 0 -10px;
+    width: calc(100% + 20px);
+  }
+
+  iframe {
+    border-radius: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .section {
+    padding: 0 0 30px 0;
+  }
+
+  .section-title {
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+  }
+
+  .map-container {
+    height: 250px;
+  }
+}
+
+@media (max-width: 360px) {
+  .map-container {
+    height: 200px;
+  }
 }
 </style>
