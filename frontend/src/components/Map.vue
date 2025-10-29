@@ -3,7 +3,7 @@
     <div class="container">
       <h2 class="section-title">Карта отключений</h2>
       <div class="map-container">
-        <div class="map-placeholder">
+        <div class="map-placeholder" id="map">
 
         </div>
       </div>
@@ -22,6 +22,30 @@ const loadCurrentStats = async () => {
     console.error('Error loading stats:', error);
   }
 };
+
+initMap();
+
+// функция асинхронная, так как она может занимать много времени в основном потоке 
+// *зависит от соединения, стабильности API и другого
+async function initMap() {
+
+  // основной объект для загрузки других объектов карты
+  await ymaps3.ready;
+  const { YMap, YMapDefaultSchemeLayer } = ymaps3;
+
+  // подложка, на которой будут располагаться маркеры
+  const map = new YMap(
+    document.getElementById('map'),
+    {
+      location: {
+        center: [37.588144, 55.733842],
+        zoom: 10
+      }
+    }
+  );
+
+  map.addChild(new YMapDefaultSchemeLayer());
+}
 
 onMounted(() => {
   loadCurrentStats();
