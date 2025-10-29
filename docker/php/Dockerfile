@@ -12,7 +12,7 @@ RUN apk add --no-cache \
         libwebp-dev \
         freetype-dev
 RUN docker-php-ext-configure gd --with-jpeg --with-webp --with-freetype
-RUN docker-php-ext-install gd
+RUN docker-php-ext-install gd pdo pdo_mysql
 
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer

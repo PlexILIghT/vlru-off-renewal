@@ -1,12 +1,22 @@
-# 
+# VLRU-OFF Redesign Project
 
-# Installation
+## Table of Contents
+- [Installation](#installation)
+    - [Windows](#windows)
+    - [Linux](#linux)
+    - [Mac](#mac)
+- [Development](#development)
+    - [Backend](#backend)
+    - [Frontend](#frontend)
+- [Docker Development](#docker-development)
+- [Tools](#tools)
+## Installation
 
 ### Windows
 
 open powershell with administrator privileges
 
-#### install choco (package manager)
+#### install Chocolatey (package manager)
 ```powershell
 Set-ExecutionPolicy AllSigned
 Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
@@ -42,7 +52,7 @@ most popular package manager is ```brew```. Install it and use it to install pac
 
 ---
 
-# Run (dev)
+## Development
 
 #### Backend
 ```
@@ -67,21 +77,50 @@ npm run dev
 
 ---
 
-## Docker Run (dev)
+## Docker Development
+first, run this:
+```
+cd backend/
+composer install
+cd ../frontend
+npm run build
+cd ..
+```
 ### In project root run the following:
-```angular2html
+```
 docker compose up --build
 ```
+```bash
+docker exec -it vlru-off-renewal-1 bash
+```
+```bash
+php bin/console doctrine:database:create
+php bin/console make:migration
+php bin/console doctrine:migrations:migrate
+php bin/console app:generate-fake-data
+exit
+```
+
 docker should build and run all the containers, and you should be able to see the page at the ```localhost```.
 API requests are forwarded automatically through nginx (API requests will look like this: *localhost/api/{query}*), but backend is running at the port 9000.
 
 Hot-reloading in docker is only configured for php right now.
 
+## Tools
+if you need to generate fake data on the fly, go into php container's bash:
+```bash
+docker exec -it vlru-off-renewal-1 bash
+```
+and run app command I created:
+```bash
+php bin/console app:generate-fake-data
+```
+
 ## nginx proxy
 - supported in docker
 
 ## Makefile
-// TODO
+TODO
 
 ## Scripts
-// TODO
+TODO
