@@ -4,6 +4,7 @@ import Footer from "./components/Footer.vue";
 import Search from "./components/Search.vue";
 import Map from "./components/Map.vue";
 import Analitic from "./components/Analitic.vue";
+import Prediction from "./components/Prediction.vue";
 import { ref, onMounted } from 'vue';
 import { mockApi } from './services/mockApi';
 
@@ -142,11 +143,7 @@ onMounted(() => {
             </a>
           </div>
         </div>
-        <div class="status-today">
-          <h2 class="status-title">Предсказать отключения</h2>
-          <p id="info-about-feature">Узнайте вероятность отключений в вашем районе на основе статистических данных</p>
-          <button class="prediction-btn">Проверить прогноз</button>
-        </div>
+        <Prediction />
       </div>
     </div>
 
@@ -298,27 +295,6 @@ hr {
 .status-link:hover {
   color: var(--primary-dark);
   border-color: var(--primary);
-}
-
-.status-today #info-about-feature {
-  margin: 10px auto;
-}
-
-.prediction-btn {
-  color: #0F9AEF;
-  border: 1px solid #0F9AEF;
-  padding: 1rem 2rem;
-  border-radius: var(--border-radius);
-  font-weight: bold;
-  background-color: white;
-  transition: var(--transition);
-}
-
-.prediction-btn:hover {
-  transform: translateY(-2px);
-  background-color: #0F9AEF;
-  color: white;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
 @media (max-width: 800px) {
