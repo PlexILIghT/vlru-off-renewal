@@ -4,13 +4,29 @@
       <h2 class="section-title">Карта отключений</h2>
       <div class="map-container">
         <div class="map-placeholder">
-          <iframe src="https://www.vl.ru/off/map/common?stop-fullscreen-on-mobile=1&iframe="
-            title="Карта отключений Владивостока"></iframe>
+
         </div>
       </div>
     </div>
   </section>
 </template>
+
+<script setup>
+import { ref, onMounted } from 'vue';
+import { mockApi } from '../services/mockApi';
+
+const loadCurrentStats = async () => {
+  try {
+    const activeOutages = await mockApi.getActiveOutages();
+  } catch (error) {
+    console.error('Error loading stats:', error);
+  }
+};
+
+onMounted(() => {
+  loadCurrentStats();
+});
+</script>
 
 <style scoped>
 .section {

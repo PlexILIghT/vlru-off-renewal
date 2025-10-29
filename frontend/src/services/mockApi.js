@@ -231,22 +231,32 @@ export const mockApi = {
       const intervalEnd = new Date(now.getTime() - (11 - i) * 5 * 60 * 1000);
       const intervalStart = new Date(intervalEnd.getTime() - 5 * 60 * 1000);
       
+      // Включаем все отключения, которые были активны в этот интервал
       const periodOutages = allOutages.filter(outage => {
-        const outageTime = new Date(outage.startTime);
-        return outageTime >= intervalStart && outageTime < intervalEnd;
+        const outageStart = new Date(outage.startTime);
+        const outageEnd = new Date(outage.endTime);
+        // Отключение активно если оно пересекается с интервалом
+        return outageStart < intervalEnd && outageEnd > intervalStart;
       });
+      
+      // Рассчитываем количество домов по типам
+      const typeHouses = {
+        cold_water: periodOutages.filter(o => o.outageType === 'cold_water')
+                         .reduce((sum, o) => sum + o.houses.length, 0),
+        hot_water: periodOutages.filter(o => o.outageType === 'hot_water')
+                        .reduce((sum, o) => sum + o.houses.length, 0),
+        electricity: periodOutages.filter(o => o.outageType === 'electricity')
+                          .reduce((sum, o) => sum + o.houses.length, 0),
+        heating: periodOutages.filter(o => o.outageType === 'heating')
+                      .reduce((sum, o) => sum + o.houses.length, 0)
+      };
 
       data.push({
         label: intervalEnd.toLocaleTimeString('ru-RU', {
           hour: '2-digit',
           minute: '2-digit'
         }),
-        types: {
-          cold_water: periodOutages.filter(o => o.outageType === 'cold_water').length,
-          hot_water: periodOutages.filter(o => o.outageType === 'hot_water').length,
-          electricity: periodOutages.filter(o => o.outageType === 'electricity').length,
-          heating: periodOutages.filter(o => o.outageType === 'heating').length
-        },
+        types: typeHouses,
         total: periodOutages.length,
         affectedHouses: periodOutages.reduce((sum, o) => sum + o.houses.length, 0)
       });
@@ -257,19 +267,29 @@ export const mockApi = {
       const hourEnd = new Date(now.getTime() - (23 - i) * 60 * 60 * 1000);
       const hourStart = new Date(hourEnd.getTime() - 60 * 60 * 1000);
       
+      // Включаем все отключения, которые были активны в этот час
       const periodOutages = allOutages.filter(outage => {
-        const outageTime = new Date(outage.startTime);
-        return outageTime >= hourStart && outageTime < hourEnd;
+        const outageStart = new Date(outage.startTime);
+        const outageEnd = new Date(outage.endTime);
+        // Отключение активно если оно пересекается с часовым интервалом
+        return outageStart < hourEnd && outageEnd > hourStart;
       });
+
+      // Рассчитываем количество домов по типам
+      const typeHouses = {
+        cold_water: periodOutages.filter(o => o.outageType === 'cold_water')
+                         .reduce((sum, o) => sum + o.houses.length, 0),
+        hot_water: periodOutages.filter(o => o.outageType === 'hot_water')
+                        .reduce((sum, o) => sum + o.houses.length, 0),
+        electricity: periodOutages.filter(o => o.outageType === 'electricity')
+                          .reduce((sum, o) => sum + o.houses.length, 0),
+        heating: periodOutages.filter(o => o.outageType === 'heating')
+                      .reduce((sum, o) => sum + o.houses.length, 0)
+      };
 
       data.push({
         label: hourEnd.getHours().toString().padStart(2, '0') + ':00',
-        types: {
-          cold_water: periodOutages.filter(o => o.outageType === 'cold_water').length,
-          hot_water: periodOutages.filter(o => o.outageType === 'hot_water').length,
-          electricity: periodOutages.filter(o => o.outageType === 'electricity').length,
-          heating: periodOutages.filter(o => o.outageType === 'heating').length
-        },
+        types: typeHouses,
         total: periodOutages.length,
         affectedHouses: periodOutages.reduce((sum, o) => sum + o.houses.length, 0)
       });
@@ -280,22 +300,32 @@ export const mockApi = {
       const dayEnd = new Date(now.getTime() - (29 - i) * 24 * 60 * 60 * 1000);
       const dayStart = new Date(dayEnd.getTime() - 24 * 60 * 60 * 1000);
       
+      // Включаем все отключения, которые были активны в этот день
       const periodOutages = allOutages.filter(outage => {
-        const outageTime = new Date(outage.startTime);
-        return outageTime >= dayStart && outageTime < dayEnd;
+        const outageStart = new Date(outage.startTime);
+        const outageEnd = new Date(outage.endTime);
+        // Отключение активно если оно пересекается с дневным интервалом
+        return outageStart < dayEnd && outageEnd > dayStart;
       });
+
+      // Рассчитываем количество домов по типам
+      const typeHouses = {
+        cold_water: periodOutages.filter(o => o.outageType === 'cold_water')
+                         .reduce((sum, o) => sum + o.houses.length, 0),
+        hot_water: periodOutages.filter(o => o.outageType === 'hot_water')
+                        .reduce((sum, o) => sum + o.houses.length, 0),
+        electricity: periodOutages.filter(o => o.outageType === 'electricity')
+                          .reduce((sum, o) => sum + o.houses.length, 0),
+        heating: periodOutages.filter(o => o.outageType === 'heating')
+                      .reduce((sum, o) => sum + o.houses.length, 0)
+      };
 
       data.push({
         label: dayEnd.toLocaleDateString('ru-RU', {
           day: '2-digit',
           month: '2-digit'
         }),
-        types: {
-          cold_water: periodOutages.filter(o => o.outageType === 'cold_water').length,
-          hot_water: periodOutages.filter(o => o.outageType === 'hot_water').length,
-          electricity: periodOutages.filter(o => o.outageType === 'electricity').length,
-          heating: periodOutages.filter(o => o.outageType === 'heating').length
-        },
+        types: typeHouses,
         total: periodOutages.length,
         affectedHouses: periodOutages.reduce((sum, o) => sum + o.houses.length, 0)
       });

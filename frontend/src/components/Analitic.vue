@@ -76,8 +76,8 @@ export default {
     const loadData = async () => {
       try {
         outagesData.value = await mockApi.getOutages();
-        updateStats();
         await generateAnalyticsData();
+        updateStats();
         await nextTick();
         renderChart();
       } catch (error) {
@@ -87,9 +87,10 @@ export default {
 
     // Обновление статистики
     const updateStats = () => {
-      stats.totalOutages = outagesData.value.length;
+      const periodData = analyticsData.value[selectedPeriod.value];
+      stats.totalOutages = periodData ? periodData.reduce((total, bar) => total + bar.total, 0) : 0;
       stats.activeOutages = outagesData.value.filter(outage => outage.status === 'active').length;
-      stats.affectedHouses = outagesData.value.reduce((total, outage) => total + outage.houses.length, 0);
+      stats.affectedHouses = periodData ? periodData.reduce((total, bar) => total + bar.affectedHouses, 0) : 0;
     };
 
     // Генерация данных для графика
@@ -104,6 +105,7 @@ export default {
           '24h': data24h,
           '30d': data30d
         };
+
       } catch (error) {
         console.error('Error generating analytics data:', error);
       }
@@ -141,8 +143,8 @@ export default {
 
       // Находим максимальное значение для масштабирования
       const maxValue = Math.max(...data.map(bar =>
-        Object.values(bar.types).reduce((sum, count) => sum + count, 0)
-      ));
+        Object.values(bar.types).reduce((sum, houses) => sum + houses, 0)
+      ), 0);
 
       const barWidth = Math.max(20, chartWidth / data.length - 10);
 
@@ -227,6 +229,7 @@ export default {
       selectedPeriod.value = period;
       await generateAnalyticsData();
       await nextTick();
+      updateStats();
       renderChart();
       selectedBar.value = null;
     };
@@ -234,7 +237,8 @@ export default {
     const getTypeCount = (type) => {
       const data = analyticsData.value[selectedPeriod.value];
       if (!data || data.length === 0) return 0;
-      return data.reduce((total, bar) => total + (bar.types[type] || 0), 0);
+      const totalHouses = data.reduce((total, bar) => total + (bar.types[type] || 0), 0);
+      return totalHouses;
     };
 
     const getBarTypeCount = (bar, type) => {
@@ -248,6 +252,7 @@ export default {
     watch(selectedPeriod, async () => {
       await generateAnalyticsData();
       await nextTick();
+      updateStats();
       renderChart();
       selectedBar.value = null;
     });
