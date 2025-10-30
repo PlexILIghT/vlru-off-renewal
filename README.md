@@ -1,5 +1,10 @@
 # VLRU-OFF Redesign Project
 
+## Built on
+- PHP/Symfony 8.4/7.3 REST API
+- Vue.js 3 frontend
+- python 3.13 FastAPI ML Microservice
+
 ## Table of Contents
 - [Installation](#installation)
     - [Windows](#windows)
@@ -115,6 +120,15 @@ and run app command I created:
 ```bash
 php bin/console app:generate-fake-data
 ```
+
+## OFF#Predict
+- implemented
+
+work needed
+
+endpoints available at ```forecast:8000``` (```localhost:8000```)
+
+TODO: pass through backend and cache result
 
 ## nginx proxy
 - supported in docker

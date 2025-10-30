@@ -48,6 +48,22 @@ services:
     networks:
       - app-network
 
+  forecast:
+    build:
+      context: .
+      dockerfile: docker/python/Dockerfile
+    volumes:
+      - .predict/:/predict:ro
+    environment:
+      - ALERT_WARN_LAMBDA=2.0
+      - ALERT_CRIT_LAMBDA=5.0
+    ports:
+      - "8000:8000"
+    networks:
+      - app-network
+
+
+
 networks:
   app-network:
     driver: bridge
