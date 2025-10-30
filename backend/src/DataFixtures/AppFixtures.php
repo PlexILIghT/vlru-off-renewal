@@ -98,8 +98,12 @@ class AppFixtures extends Fixture
 
     private function loadBigFolkDistricts(ObjectManager $manager): void
     {
+        $bigFolkDistrictNames = [
+            'имя1', 'имя2', 'имя3', 'имя4'
+        ];
         for ($i = 1; $i <= 5; $i++) {
             $bigFolkDistrict = new BigFolkDistrict();
+            $bigFolkDistrict->setName($this->faker->randomElement($bigFolkDistrictNames));
             $manager->persist($bigFolkDistrict);
             $this->bigFolkDistricts[] = $bigFolkDistrict;
         }
@@ -159,7 +163,7 @@ class AppFixtures extends Fixture
         for ($i = 0; $i < 50; $i++) {
             $blackout = new Blackout();
             $blackout->setStartDate($this->faker->dateTimeBetween('-1 month', 'now'));
-            $blackout->setEndDate($this->faker->dateTimeBetween('now', '+1 day'));
+            $blackout->setEndDate($this->faker->dateTimeBetween('now', '+1 week'));
             $blackout->setDescription($this->faker->text(200));
             $blackout->setType($this->faker->randomElement($blackoutTypes));
             $blackout->setInitiatorName($this->faker->randomElement($initiatorNames));

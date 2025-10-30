@@ -3,8 +3,11 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\FolkDistrictRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -14,31 +17,22 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: FolkDistrictRepository::class)]
-#[ApiResource(
-    operations: [
-        new GetCollection(normalizationContext: ['groups' => ['folk_district:list']]),
-        new Post(denormalizationContext: ['groups' => ['folk_district:write']]),
-        new Get(normalizationContext: ['groups' => ['folk_district:detail']]),
-        new Put(denormalizationContext: ['groups' => ['folk_district:write']]),
-        new Delete(),
-    ]
-)]#[ApiResource(
-    operations: [
-        new GetCollection(normalizationContext: ['groups' => ['folk_district:list']]),
-        new Post(denormalizationContext: ['groups' => ['folk_district:write']]),
-        new Get(normalizationContext: ['groups' => ['folk_district:detail']]),
-        new Put(denormalizationContext: ['groups' => ['folk_district:write']]),
-        new Delete(),
-    ],
-    routePrefix: '/api'
-)]
+//#[ApiResource(
+//    operations: [
+//        new GetCollection(normalizationContext: ['groups' => ['folk_district:list']]),
+//        new Post(denormalizationContext: ['groups' => ['folk_district:write']]),
+//        new Get(normalizationContext: ['groups' => ['folk_district:detail']]),
+//        new Put(denormalizationContext: ['groups' => ['folk_district:write']]),
+//        new Delete(),
+//    ]
+//)]
 class FolkDistrict
 {
+
     #[ORM\Id]
-    #[ORM\Column(type: 'uuid', unique: true)]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
-    #[Groups(['folk_district:list', 'folk_district:detail', 'building:detail'])]
+    #[ORM\Column(type: 'uuid')]
+    #[ORM\GeneratedValue(strategy: "CUSTOM")]
+    #[ORM\CustomIdGenerator(class: "Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator")]
     private ?Uuid $id = null;
 
     #[ORM\Column(length: 255)]
@@ -54,18 +48,6 @@ class FolkDistrict
     public function __construct()
     {
         $this->buildings = new ArrayCollection();
-    }
-
-    public function getId(): ?Uuid
-    {
-        return $this->id;
-    }
-
-    public function setId(Uuid $id): static
-    {
-        $this->id = $id;
-
-        return $this;
     }
 
     public function getName(): ?string
@@ -106,6 +88,18 @@ class FolkDistrict
                 $building->setFolkDistrict(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getId(): ?Uuid
+    {
+        return $this->id;
+    }
+
+    public function setId(Uuid $id): static
+    {
+        $this->id = $id;
 
         return $this;
     }

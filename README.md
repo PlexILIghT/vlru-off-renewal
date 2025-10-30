@@ -91,7 +91,7 @@ cd ..
 docker compose up --build
 ```
 ```bash
-docker exec -it vlru-off-renewal-1 bash
+docker exec -it vlru-off-renewal-php-1 bash
 ```
 ```bash
 php bin/console doctrine:database:create
@@ -109,7 +109,7 @@ Hot-reloading in docker is only configured for php right now.
 ## Tools
 if you need to generate fake data on the fly, go into php container's bash:
 ```bash
-docker exec -it vlru-off-renewal-1 bash
+docker exec -it vlru-off-renewal-php-1 bash
 ```
 and run app command I created:
 ```bash
