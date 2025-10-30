@@ -1,12 +1,27 @@
-# 
+# VLRU-OFF Redesign Project
 
-# Installation
+## Built on
+- PHP/Symfony 8.4/7.3 REST API
+- Vue.js 3 frontend
+- python 3.13 FastAPI ML Microservice
+
+## Table of Contents
+- [Installation](#installation)
+    - [Windows](#windows)
+    - [Linux](#linux)
+    - [Mac](#mac)
+- [Development](#development)
+    - [Backend](#backend)
+    - [Frontend](#frontend)
+- [Docker Development](#docker-development)
+- [Tools](#tools)
+## Installation
 
 ### Windows
 
 open powershell with administrator privileges
 
-#### install choco (package manager)
+#### install Chocolatey (package manager)
 ```powershell
 Set-ExecutionPolicy AllSigned
 Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
@@ -17,17 +32,19 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManage
 choco
 ```
 #### check if required tools are installed
-- check git
-- check nodejs
-- check composer
-- check symfony-cli
+- git
+- nodejs
+- composer
+- symfony-cli
+- docker
 
-if not found then
+if not found then install what you need with choco:
 ```powershell
 choco install composer
 choco install git
 choco install nodejs
 choco install symfony-cli
+choco install docker-desktop
 ```
 
 ### Linux
@@ -40,7 +57,7 @@ most popular package manager is ```brew```. Install it and use it to install pac
 
 ---
 
-# Run (dev)
+## Development
 
 #### Backend
 ```
@@ -49,27 +66,75 @@ cd backend/
 ```
 composer install
 ```
-
+```
+symfony server:start --port=80
+```
+API requests should be done are as followed: *localhost/api/{your query}*
 #### Frontend
 ```
 cd frontend/
 ```
 
-or ```cd ../frontend``` if you were in ```backend/``` directory and vise versa
+or ```cd ../frontend``` if you were in ```backend/``` directory and vice versa
 ```
 npm run dev
 ```
 
 ---
 
-## Docker
-// TODO
+## Docker Development
+first, run this:
+```
+cd backend/
+composer install
+cd ../frontend
+npm run build
+cd ..
+```
+### In project root run the following:
+```
+docker compose up --build
+```
+```bash
+docker exec -it vlru-off-renewal-php-1 bash
+```
+```bash
+php bin/console doctrine:database:create
+php bin/console make:migration
+php bin/console doctrine:migrations:migrate
+php bin/console app:generate-fake-data
+exit
+```
+
+docker should build and run all the containers, and you should be able to see the page at the ```localhost```.
+API requests are forwarded automatically through nginx (API requests will look like this: *localhost/api/{query}*), but backend is running at the port 9000.
+
+Hot-reloading in docker is only configured for php right now.
+
+## Tools
+if you need to generate fake data on the fly, go into php container's bash:
+```bash
+docker exec -it vlru-off-renewal-php-1 bash
+```
+and run app command I created:
+```bash
+php bin/console app:generate-fake-data
+```
+
+## OFF#Predict
+- implemented
+
+work needed
+
+endpoints available at ```forecast:8000``` (```localhost:8000```)
+
+TODO: pass through backend and cache result
 
 ## nginx proxy
-// TODO
+- supported in docker
 
 ## Makefile
-// TODO
+TODO
 
 ## Scripts
-// TODO
+TODO
