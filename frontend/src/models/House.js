@@ -1,11 +1,11 @@
 // src/models/House.js
 export default class House {
-  constructor({ id, address, organization, hotWaterStatus, heatingStatus, coldWaterStatus }) {
+  constructor({ id, address, initiatorName, hotWaterStatus, heatStatus, coldWaterStatus }) {
     this.id = id;
     this.address = address;
-    this.organization = organization; 
+    this.organization = initiatorName;
     this.hotWaterStatus = hotWaterStatus; 
-    this.heatingStatus = heatingStatus; 
+    this.heatStatus = heatStatus;
     this.coldWaterStatus = coldWaterStatus; 
   }
 }

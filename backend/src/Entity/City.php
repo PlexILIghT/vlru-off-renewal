@@ -2,29 +2,47 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\CityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Types\UuidType;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: CityRepository::class)]
+//#[ApiResource(
+//    operations: [
+//        new GetCollection(normalizationContext: ['groups' => ['city:list']]),
+//        new Post(denormalizationContext: ['groups' => ['city:write']]),
+//        new Get(normalizationContext: ['groups' => ['city:detail']]),
+//        new Put(denormalizationContext: ['groups' => ['city:write']]),
+//        new Delete(),
+//    ]
+//)]
 class City
 {
     #[ORM\Id]
-    #[ORM\Column(type: UuidType::NAME, unique: true)]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
+    #[ORM\Column(type: 'uuid')]
+    #[ORM\GeneratedValue(strategy: "CUSTOM")]
+    #[ORM\CustomIdGenerator(class: "Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator")]
     private ?Uuid $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['city:list', 'city:detail'])]
     private ?string $name = null;
 
     /**
      * @var Collection<int, Street>
      */
     #[ORM\OneToMany(targetEntity: Street::class, mappedBy: 'city')]
+    #[Groups(['city:detail'])]
     private Collection $streets;
 
     /**
@@ -37,18 +55,6 @@ class City
     {
         $this->streets = new ArrayCollection();
         $this->buildings = new ArrayCollection();
-    }
-
-    public function getId(): ?Uuid
-    {
-        return $this->id;
-    }
-
-    public function setId(Uuid $id): static
-    {
-        $this->id = $id;
-
-        return $this;
     }
 
     public function getName(): ?string
@@ -119,6 +125,18 @@ class City
                 $building->setCity(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getId(): ?Uuid
+    {
+        return $this->id;
+    }
+
+    public function setId(Uuid $id): static
+    {
+        $this->id = $id;
 
         return $this;
     }

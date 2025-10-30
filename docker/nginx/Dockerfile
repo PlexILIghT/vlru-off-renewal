@@ -1,5 +1,7 @@
 FROM node:current-alpine as build-stage
 
+WORKDIR /var/www/html
+
 COPY frontend/package*.json ./
 # COPY ui-kit/package*.json ./ui-kit/
 
@@ -17,4 +19,3 @@ COPY docker/nginx/nginx.conf /etc/nginx/nginx.conf
 
 RUN mkdir -p /var/www/html
 
-WORKDIR /var/www/html

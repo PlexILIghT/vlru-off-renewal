@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}BigFolkDistrict index{% endblock %}
+
+{% block body %}
+    <h1>BigFolkDistrict index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for big_folk_district in big_folk_districts %}
+            <tr>
+                <td>{{ big_folk_district.id }}</td>
+                <td>
+                    <a href="{{ path('app_big_folk_district_show', {'id': big_folk_district.id}) }}">show</a>
+                    <a href="{{ path('app_big_folk_district_edit', {'id': big_folk_district.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="2">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_big_folk_district_new') }}">Create new</a>
+{% endblock %}
