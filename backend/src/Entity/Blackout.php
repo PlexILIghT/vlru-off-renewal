@@ -12,25 +12,27 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: BlackoutRepository::class)]
-#[ApiResource(
-    operations: [
-        new GetCollection(normalizationContext: ['groups' => ['blackout:list']]),
-        new Get(normalizationContext: ['groups' => ['blackout:detail']]),
-        new Post(denormalizationContext: ['groups' => ['blackout:write']]),
-        new Delete(),
-    ]
-)]
+//#[ApiResource(
+//    operations: [
+//        new GetCollection(normalizationContext: ['groups' => ['blackout:list']]),
+//        new Get(
+//            uriTemplate: '/blackouts/active',
+//            name: 'blackouts_active'
+//        ),
+//        new Post(denormalizationContext: ['groups' => ['blackout:write']]),
+//        new Delete(),
+//    ]
+//)]
 class Blackout
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'uuid', unique: true)]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
-    #[Groups(['blackout:list', 'blackout:detail', 'building:detail'])]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'uuid')]
     private ?Uuid $id = null;
 
     #[ORM\Column(nullable: true)]
@@ -67,18 +69,6 @@ class Blackout
     public function __construct()
     {
         $this->buildings = new ArrayCollection();
-    }
-
-    public function getId(): ?Uuid
-    {
-        return $this->id;
-    }
-
-    public function setId(Uuid $id): static
-    {
-        $this->id = $id;
-
-        return $this;
     }
 
     public function getStartDate(): ?\DateTime
@@ -173,6 +163,18 @@ class Blackout
     public function removeBuilding(Building $building): static
     {
         $this->buildings->removeElement($building);
+
+        return $this;
+    }
+
+    public function getId(): ?Uuid
+    {
+        return $this->id;
+    }
+
+    public function setId(Uuid $id): static
+    {
+        $this->id = $id;
 
         return $this;
     }

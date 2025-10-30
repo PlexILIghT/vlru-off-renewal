@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 
@@ -15,6 +16,46 @@ use Symfony\Component\Routing\Annotation\Route;
 #[OA\Tag(name: 'Blackouts')]
 class BlackoutController extends AbstractController
 {
+    #[Route('/search', methods: ['GET'])]
+    public function search(Request $request): JsonResponse
+    {
+        $query = $request->query->get('q', '');
+
+        $blackouts = $this->em->getRepository(Blackout::class)
+            ->createQueryBuilder('b')
+            ->leftJoin('b.buildings', 'building')
+            ->leftJoin('building.street', 'street')
+            ->leftJoin('building.city', 'city')
+            ->where('b.description LIKE :query')
+            ->orWhere('street.name LIKE :query')
+            ->orWhere('city.name LIKE :query')
+            ->setParameter('query', '%' . $query . '%')
+            ->getQuery()
+            ->getResult();
+
+        $data = array_map(fn(Blackout $b) => $this->serializeBlackout($b), $blackouts);
+
+        return $this->json($data);
+    }
+
+    #[Route('/active', name: 'blackouts_active', methods: ['GET'])]
+    public function active(): JsonResponse
+    {
+        $now = new \DateTime();
+
+        $blackouts = $this->em->getRepository(Blackout::class)
+            ->createQueryBuilder('b')
+            ->where('b.startDate <= :now')
+            ->andWhere('b.endDate >= :now')
+            ->setParameter('now', $now)
+            ->getQuery()
+            ->getResult();
+
+        $data = array_map(fn(Blackout $b) => $this->serializeBlackout($b), $blackouts);
+
+        return $this->json($data);
+    }
+
     public function __construct(private EntityManagerInterface $em) {}
 
     #[Route('', methods:['GET'])]
@@ -200,5 +241,71 @@ class BlackoutController extends AbstractController
         $this->em->remove($b);
         $this->em->flush();
         return $this->json(['ok' => true]);
+    }
+
+    #[Route('/type/{type}', methods: ['GET'])]
+    public function byType(string $type): JsonResponse
+    {
+        $blackouts = $this->em->getRepository(Blackout::class)
+            ->findBy(['type' => $type]);
+
+        $data = array_map(fn(Blackout $b) => $this->serializeBlackout($b), $blackouts);
+
+        return $this->json($data);
+    }
+
+    private function serializeBlackout(Blackout $blackout): array
+    {
+        return [
+            'id' => $blackout->getId(),
+            'reason' => $blackout->getDescription(),
+            'status' => $this->calculateStatus($blackout),
+            'organization' => [
+                'id' => $blackout->getInitiatorName(), // временно
+                'name' => $blackout->getInitiatorName(),
+                'serviceType' => [$blackout->getType()]
+            ],
+            'startTime' => $blackout->getStartDate()?->format('c'),
+            'endTime' => $blackout->getEndDate()?->format('c'),
+            'outageType' => $blackout->getType(),
+            'houses' => array_map(fn($building) => $this->serializeBuilding($building),
+                $blackout->getBuildings()->toArray())
+        ];
+    }
+
+    private function calculateStatus(Blackout $blackout): string
+    {
+        $now = new \DateTime();
+        $start = $blackout->getStartDate();
+        $end = $blackout->getEndDate();
+
+        if (!$start || !$end) return 'planned';
+
+        if ($now < $start) return 'planned';
+        if ($now > $end) return 'completed';
+        return 'active';
+    }
+
+    private function serializeBuilding(Building $building): array
+    {
+        return [
+            'id' => $building->getId(),
+            'address' => $this->formatAddress($building),
+            'hotWaterStatus' => 'connected', // нужно вычислять на основе blackouts
+            'heatingStatus' => 'connected',
+            'coldWaterStatus' => 'connected'
+        ];
+    }
+
+    private function formatAddress(Building $building): string
+    {
+        $parts = [];
+        if ($building->getStreet()?->getName()) {
+            $parts[] = $building->getStreet()->getName();
+        }
+        if ($building->getNumber()) {
+            $parts[] = $building->getNumber();
+        }
+        return implode(', ', $parts);
     }
 }

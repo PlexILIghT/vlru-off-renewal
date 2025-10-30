@@ -7,9 +7,11 @@ use App\Form\BigFolkDistrictType;
 use App\Repository\BigFolkDistrictRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/api/big_folk_districts')]
 final class BigFolkDistrictController extends AbstractController
@@ -27,7 +29,7 @@ final class BigFolkDistrictController extends AbstractController
     public function new(Request $request, EntityManagerInterface $entityManager, ValidatorInterface $validator): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-        
+
         $bigFolkDistrict = new BigFolkDistrict();
         $bigFolkDistrict->setName($data['name'] ?? '');
 
@@ -40,7 +42,7 @@ final class BigFolkDistrictController extends AbstractController
         $entityManager->flush();
 
         return $this->json(
-            $bigFolkDistrict, 
+            $bigFolkDistrict,
             Response::HTTP_CREATED,
             context: ['groups' => ['big_folk_district:detail']]
         );
@@ -50,7 +52,7 @@ final class BigFolkDistrictController extends AbstractController
     public function show(BigFolkDistrict $bigFolkDistrict): JsonResponse
     {
         return $this->json(
-            $bigFolkDistrict, 
+            $bigFolkDistrict,
             context: ['groups' => ['big_folk_district:detail']]
         );
     }
@@ -59,7 +61,7 @@ final class BigFolkDistrictController extends AbstractController
     public function edit(Request $request, BigFolkDistrict $bigFolkDistrict, EntityManagerInterface $entityManager, ValidatorInterface $validator): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-        
+
         $bigFolkDistrict->setName($data['name'] ?? $bigFolkDistrict->getName());
 
         $errors = $validator->validate($bigFolkDistrict);

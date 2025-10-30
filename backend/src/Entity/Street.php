@@ -3,33 +3,35 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\StreetRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: StreetRepository::class)]
-#[ApiResource(
-    operations: [
-        new GetCollection(normalizationContext: ['groups' => ['street:list']]),
-        new Post(denormalizationContext: ['groups' => ['street:write']]),
-        new Get(normalizationContext: ['groups' => ['street:detail']]),
-        new Put(denormalizationContext: ['groups' => ['street:write']]),
-        new Delete(),
-    ]
-)]
+//#[ApiResource(
+//    operations: [
+//        new GetCollection(normalizationContext: ['groups' => ['street:list']]),
+//        new Post(denormalizationContext: ['groups' => ['street:write']]),
+//        new Get(normalizationContext: ['groups' => ['street:detail']]),
+//        new Put(denormalizationContext: ['groups' => ['street:write']]),
+//        new Delete(),
+//    ]
+//)]
 class Street
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'uuid', unique: true)]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
-    #[Groups(['street:list', 'street:detail', 'building:list', 'building:detail'])]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'uuid')]
     private ?Uuid $id = null;
 
     #[ORM\Column(length: 255)]
@@ -46,21 +48,10 @@ class Street
     #[ORM\OneToMany(targetEntity: Building::class, mappedBy: 'street')]
     private Collection $buildings;
 
+
     public function __construct()
     {
         $this->buildings = new ArrayCollection();
-    }
-
-    public function getId(): ?Uuid
-    {
-        return $this->id;
-    }
-
-    public function setId(Uuid $id): static
-    {
-        $this->id = $id;
-
-        return $this;
     }
 
     public function getName(): ?string
@@ -113,6 +104,18 @@ class Street
                 $building->setStreet(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getId(): ?Uuid
+    {
+        return $this->id;
+    }
+
+    public function setId(Uuid $id): static
+    {
+        $this->id = $id;
 
         return $this;
     }
