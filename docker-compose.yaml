@@ -1,17 +1,62 @@
-services:
 # TODO: use ENV vars to make config easier
-  database:
+# TODO: separate docker-compose.yaml to backend and frontend
+# TODO: make prod.yaml
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: docker/nginx/Dockerfile
+    ports:
+      - "80:80"
+    volumes:
+      # Монтируем собранный Vue (в разработке из папки, в проде из контейнера)
+      - ./frontend/dist:/var/www/html
+      # монтирование конфига nginx для разработки
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - php
+    networks:
+      - app-network
+
+  php:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    volumes:
+      # монтирование hot-reload в разработке
+      - ./backend:/var/www
+      - ./docker/php/php.ini:/usr/local/etc/php/php.ini:ro
+    environment:
+      - APP_ENV=dev
+      - DATABASE_URL=mysql://root:root@mysql:3306/app_db
+    depends_on:
+      - mysql
+    networks:
+      - app-network
+
+  mysql:
     image: mysql:9.4
     environment:
-        MYSQL_ROOT_PASSWORD: root
-        MYSQL_DATABASE: symfony_app
-        MYSQL_USER: app_user
-        MYSQL_PASSWORD: user_password
-    ports:
-      - "3306:3306"
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: app_db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
     volumes:
       - mysql_data:/var/lib/mysql
-    restart: always
+    ports:
+      -  '3306:3306' # Только для разработки
+    networks:
+      - app-network
+
+#  # Сервис для сборки Vue (опционально, можно собирать на хосте, пока сделал чтобы не былоо внезапных проблем)
+#  # TODO: сделать hot-reload для фронта
+#  vue-builder:
+#    build:
+#      context: .
+#      dockerfile: docker/vue/Dockerfile
+#    volumes:
+#      - ./frontend/dist:/app/dist  # Сохраняем результат сборки на хост
+#    command: echo "Vue build completed!!!"
 
 networks:
   app-network:
