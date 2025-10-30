@@ -13,11 +13,14 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { mockApi } from '../services/mockApi';
+
+import {api} from '../services/api.js';
+import {mockApi} from "@/services/mockApi.js";
 
 const loadCurrentStats = async () => {
   try {
-    const activeOutages = await mockApi.getActiveOutages();
+    // const activeOutages = await mockApi.getActiveOutages();
+    const activeOutages = await api.getActiveOutages();
   } catch (error) {
     console.error('Error loading stats:', error);
   }
@@ -25,15 +28,15 @@ const loadCurrentStats = async () => {
 
 initMap();
 
-// функция асинхронная, так как она может занимать много времени в основном потоке 
-// *зависит от соединения, стабильности API и другого
+
+
 async function initMap() {
 
-  // основной объект для загрузки других объектов карты
+
   await ymaps3.ready;
   const { YMap, YMapDefaultSchemeLayer } = ymaps3;
 
-  // подложка, на которой будут располагаться маркеры
+
   const map = new YMap(
     document.getElementById('map'),
     {

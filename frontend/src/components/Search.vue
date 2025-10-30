@@ -27,6 +27,7 @@
 <script>
 import { ref, onMounted, onUnmounted } from 'vue';
 import { mockApi } from '@/services/mockApi';
+import {api} from '@/services/api.js';
 
 export default {
   name: 'Search',
@@ -48,7 +49,8 @@ export default {
 
       debounceTimer = setTimeout(async () => {
         try {
-          suggestions.value = await mockApi.getAddressSuggestions(searchQuery.value);
+          // suggestions.value = await mockApi.getAddressSuggestions(searchQuery.value);
+          suggestions.value = await api.getAddressSuggestions(searchQuery.value);
         } catch (error) {
           console.error('Error fetching suggestions:', error);
           suggestions.value = [];

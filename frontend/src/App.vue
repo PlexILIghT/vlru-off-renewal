@@ -7,6 +7,7 @@ import Analitic from "./components/Analitic.vue";
 import Prediction from "./components/Prediction.vue";
 import { ref, onMounted } from 'vue';
 import { mockApi } from './services/mockApi';
+import {api} from "@/services/api.js";
 
 const hasPlannedOutages = ref(false);
 const currentStats = ref({
@@ -25,7 +26,7 @@ const orgStats = ref({
 
 const loadCurrentStats = async () => {
   try {
-    const activeOutages = await mockApi.getActiveOutages();
+    const activeOutages = await api.getActiveOutages();
     currentStats.value = {
       cold_water: activeOutages.filter(o => o.outageType === 'cold_water').length,
       hot_water: activeOutages.filter(o => o.outageType === 'hot_water').length,

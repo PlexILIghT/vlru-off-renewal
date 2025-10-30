@@ -43,6 +43,7 @@
 <script>
 import { ref, onMounted, watch, reactive, nextTick } from 'vue';
 import { mockApi } from '@/services/mockApi';
+import {api} from '@/services/api.js';
 
 export default {
   name: 'Analitic',
@@ -75,7 +76,8 @@ export default {
     // Загрузка данных
     const loadData = async () => {
       try {
-        outagesData.value = await mockApi.getOutages();
+        outagesData.value = await api.getOutages();
+        // outagesData.value = await mockApi.getOutages();
         await generateAnalyticsData();
         updateStats();
         await nextTick();
@@ -96,9 +98,14 @@ export default {
     // Генерация данных для графика
     const generateAnalyticsData = async () => {
       try {
-        const data60m = await mockApi.getAnalytics('60m');
-        const data24h = await mockApi.getAnalytics('24h');
-        const data30d = await mockApi.getAnalytics('30d');
+
+        const data60m = await api.getAnalytics('60m');
+        const data24h = await api.getAnalytics('24h');
+        const data30d = await api.getAnalytics('30d');
+
+        // const data60m = await mockApi.getAnalytics('60m');
+        // const data24h = await mockApi.getAnalytics('24h');
+        // const data30d = await mockApi.getAnalytics('30d');
 
         analyticsData.value = {
           '60m': data60m,
