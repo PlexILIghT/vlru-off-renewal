@@ -2,29 +2,42 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
 use App\Repository\CityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Types\UuidType;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: CityRepository::class)]
+#[ApiResource(
+    operations: [
+        new GetCollection(normalizationContext: ['groups' => ['city:list']]),
+        new Get(normalizationContext: ['groups' => ['city:detail']]),
+    ]
+)]
 class City
 {
     #[ORM\Id]
-    #[ORM\Column(type: UuidType::NAME, unique: true)]
+    #[ORM\Column(type: 'uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
+    #[Groups(['city:list', 'city:detail', 'building:list', 'building:detail'])]
     private ?Uuid $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['city:list', 'city:detail'])]
     private ?string $name = null;
 
     /**
      * @var Collection<int, Street>
      */
     #[ORM\OneToMany(targetEntity: Street::class, mappedBy: 'city')]
+    #[Groups(['city:detail'])]
     private Collection $streets;
 
     /**

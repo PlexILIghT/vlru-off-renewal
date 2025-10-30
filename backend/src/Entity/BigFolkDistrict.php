@@ -2,21 +2,36 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
 use App\Repository\BigFolkDistrictRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Types\UuidType;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: BigFolkDistrictRepository::class)]
+#[ApiResource(
+    operations: [
+        new GetCollection(normalizationContext: ['groups' => ['big_folk_district:list']]),
+        new Get(normalizationContext: ['groups' => ['big_folk_district:detail']]),
+    ]
+)]
 class BigFolkDistrict
 {
     #[ORM\Id]
     #[ORM\Column(type: 'uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
+    #[Groups(['big_folk_district:list', 'big_folk_district:detail', 'building:detail'])]
     private ?Uuid $id = null;
+
+    #[ORM\Column(length: 255)]
+    #[Groups(['big_folk_district:list', 'big_folk_district:detail'])]
+    private ?string $name = null;
 
     /**
      * @var Collection<int, Building>
