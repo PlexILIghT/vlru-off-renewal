@@ -7,18 +7,28 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Types\UuidType;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: DistrictRepository::class)]
+#[ApiResource(
+    operations: [
+        new GetCollection(normalizationContext: ['groups' => ['district:list']]),
+        new Get(normalizationContext: ['groups' => ['district:detail']]),
+    ],
+    routePrefix: '/api'
+)]
 class District
 {
     #[ORM\Id]
-    #[ORM\Column(type: UuidType::NAME, unique: true)]
+    #[ORM\Column(type: 'uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
+    #[Groups(['district:list', 'district:detail', 'building:list', 'building:detail'])]
     private ?Uuid $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['district:list', 'district:detail'])]
     private ?string $name = null;
 
     /**

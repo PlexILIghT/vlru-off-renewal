@@ -2,53 +2,82 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\BuildingRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Types\UuidType;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: BuildingRepository::class)]
+#[ApiResource(
+    operations: [
+        new GetCollection(normalizationContext: ['groups' => ['building:list']]),
+        new Get(normalizationContext: ['groups' => ['building:detail']]),
+        new Post(denormalizationContext: ['groups' => ['building:write']]),
+        new Put(denormalizationContext: ['groups' => ['building:update']]),
+        new Patch(denormalizationContext: ['groups' => ['building:update']]),
+        new Delete(),
+    ]
+)]
 class Building
 {
     #[ORM\Id]
-    #[ORM\Column(type: UuidType::NAME, unique: true)]
+    #[ORM\Column(type: 'uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
+    #[Groups(['building:list', 'building:detail', 'blackout:list', 'blackout:detail'])]
     private ?Uuid $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'buildings')]
+    #[Groups(['building:list', 'building:detail', 'building:write'])]
     private ?Street $street = null;
 
     #[ORM\Column(length: 50, nullable: true)]
+    #[Groups(['building:list', 'building:detail', 'building:write', 'building:update'])]
     private ?string $number = null;
 
     #[ORM\ManyToOne(inversedBy: 'buildings')]
+    #[Groups(['building:list', 'building:detail', 'building:write'])]
     private ?District $district = null;
 
     #[ORM\Column]
+    #[Groups(['building:list', 'building:detail', 'building:write', 'building:update'])]
     private ?bool $isFake = null;
 
     #[ORM\ManyToOne(inversedBy: 'buildings')]
+    #[Groups(['building:detail', 'building:write'])]
     private ?FolkDistrict $folkDistrict = null;
 
     #[ORM\ManyToOne(inversedBy: 'buildings')]
+    #[Groups(['building:detail', 'building:write'])]
     private ?BigFolkDistrict $bigFolkDistrict = null;
 
     #[ORM\Column(length: 100, nullable: true)]
+    #[Groups(['building:detail', 'building:write', 'building:update'])]
     private ?string $type = null;
 
     #[ORM\ManyToOne(inversedBy: 'buildings')]
+    #[Groups(['building:list', 'building:detail', 'building:write'])]
     private ?City $city = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['building:detail', 'building:write', 'building:update'])]
     private ?array $coordinates = null;
 
     /**
      * @var Collection<int, Blackout>
      */
     #[ORM\ManyToMany(targetEntity: Blackout::class, mappedBy: 'buildings')]
+    #[Groups(['building:detail'])]
     private Collection $blackouts;
 
     public function __construct()
