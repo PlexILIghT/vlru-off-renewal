@@ -14,9 +14,11 @@ use Symfony\Component\Uid\Uuid;
 #[ApiResource(
     operations: [
         new GetCollection(normalizationContext: ['groups' => ['district:list']]),
+        new Post(denormalizationContext: ['groups' => ['district:write']]),
         new Get(normalizationContext: ['groups' => ['district:detail']]),
-    ],
-    routePrefix: '/api'
+        new Put(denormalizationContext: ['groups' => ['district:write']]),
+        new Delete(),
+    ]
 )]
 class District
 {

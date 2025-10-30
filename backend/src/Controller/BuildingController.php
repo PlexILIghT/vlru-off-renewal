@@ -14,11 +14,33 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/api/buildings')]
+#[OA\Tag(name: 'Buildings')]
 class BuildingController extends AbstractController
 {
     public function __construct(private readonly EntityManagerInterface $em) {}
 
     #[Route('', methods: ['GET'])]
+    #[OA\Get(
+        summary: 'Получить список всех зданий',
+        description: 'Возвращает массив всех зданий в системе'
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Список зданий',
+        content: new OA\JsonContent(
+            type: 'array',
+            items: new OA\Items(
+                properties: [
+                    new OA\Property(property: 'id', type: 'string'),
+                    new OA\Property(property: 'number', type: 'string', nullable: true),
+                    new OA\Property(property: 'city', type: 'string', nullable: true),
+                    new OA\Property(property: 'street', type: 'string', nullable: true),
+                    new OA\Property(property: 'district', type: 'string', nullable: true),
+                    new OA\Property(property: 'isFake', type: 'boolean')
+                ]
+            )
+        )
+    )]
     public function list(): JsonResponse {
         $items = $this->em->getRepository(Building::class)->findAll();
         $data = array_map(fn(Building $b) => [
@@ -33,6 +55,38 @@ class BuildingController extends AbstractController
     }
 
     #[Route('/{id}', methods: ['GET'])]
+    #[OA\Get(
+        summary: 'Получить информацию о здании',
+        description: 'Возвращает детальную информацию о здании по указанному ID'
+    )]
+    #[OA\Parameter(
+        name: 'id',
+        description: 'UUID здания',
+        in: 'path',
+        required: true,
+        schema: new OA\Schema(type: 'string', format: 'uuid')
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Детальная информация о здании',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'id', type: 'string'),
+                new OA\Property(property: 'number', type: 'string', nullable: true),
+                new OA\Property(property: 'coordinates', type: 'array', items: new OA\Items(type: 'number'), nullable: true),
+                new OA\Property(property: 'blackouts', type: 'array', items: new OA\Items(type: 'string'))
+            ]
+        )
+    )]
+    #[OA\Response(
+        response: 404,
+        description: 'Здание не найдено',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'error', type: 'string', example: 'not found')
+            ]
+        )
+    )]
     public function get(string $id): JsonResponse {
         $b = $this->em->getRepository(Building::class)->find($id);
         if (!$b) return $this->json(['error' => 'not found'], 404);
@@ -45,6 +99,45 @@ class BuildingController extends AbstractController
     }
 
     #[Route('', methods: ['POST'])]
+    #[OA\Post(
+        summary: 'Создать новое здание',
+        description: 'Создает новую запись о здании в системе'
+    )]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'id', type: 'string', description: 'UUID здания (опционально, генерируется автоматически)', example: '550e8400-e29b-41d4-a716-446655440000'),
+                new OA\Property(property: 'number', type: 'string', description: 'Номер здания', example: '15А'),
+                new OA\Property(property: 'type', type: 'string', description: 'Тип здания', example: 'residential'),
+                new OA\Property(property: 'isFake', type: 'boolean', description: 'Флаг временного здания', example: false),
+                new OA\Property(property: 'city_id', type: 'string', description: 'UUID города', example: '550e8400-e29b-41d4-a716-446655440002'),
+                new OA\Property(property: 'street_id', type: 'string', description: 'UUID улицы', example: '550e8400-e29b-41d4-a716-446655440003'),
+                new OA\Property(property: 'district_id', type: 'string', description: 'UUID района', example: '550e8400-e29b-41d4-a716-446655440004'),
+                new OA\Property(property: 'folk_district_id', type: 'string', description: 'UUID народного района', example: '550e8400-e29b-41d4-a716-446655440005'),
+                new OA\Property(property: 'big_folk_district_id', type: 'string', description: 'UUID большого народного района', example: '550e8400-e29b-41d4-a716-446655440006'),
+                new OA\Property(property: 'coordinates', type: 'array', description: 'Географические координаты [долгота, широта]', items: new OA\Items(type: 'number'))
+            ]
+        )
+    )]
+    #[OA\Response(
+        response: 201,
+        description: 'Здание успешно создано',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'id', type: 'string', description: 'UUID созданного здания')
+            ]
+        )
+    )]
+    #[OA\Response(
+        response: 400,
+        description: 'Некорректный запрос',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'error', type: 'string', example: 'invalid json')
+            ]
+        )
+    )]
     public function create(Request $req): JsonResponse {
         $data = json_decode($req->getContent(), true);
         if ($data === null) return $this->json(['error' => 'invalid json'], 400);
@@ -90,6 +183,50 @@ class BuildingController extends AbstractController
     }
 
     #[Route('/{id}', methods: ['PUT','PATCH'])]
+    #[OA\Put(
+        summary: 'Обновить информацию о здании',
+        description: 'Обновляет информацию о здании (полное обновление)'
+    )]
+    #[OA\Patch(
+        summary: 'Частично обновить информацию о здании',
+        description: 'Частично обновляет информацию о здании'
+    )]
+    #[OA\Parameter(
+        name: 'id',
+        description: 'UUID здания',
+        in: 'path',
+        required: true,
+        schema: new OA\Schema(type: 'string', format: 'uuid')
+    )]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'number', type: 'string', description: 'Номер здания', example: '15А'),
+                new OA\Property(property: 'type', type: 'string', description: 'Тип здания', example: 'residential'),
+                new OA\Property(property: 'isFake', type: 'boolean', description: 'Флаг временного здания', example: false),
+                new OA\Property(property: 'coordinates', type: 'array', description: 'Географические координаты [долгота, широта]', items: new OA\Items(type: 'number'))
+            ]
+        )
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Здание успешно обновлено',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'ok', type: 'boolean', example: true)
+            ]
+        )
+    )]
+    #[OA\Response(
+        response: 404,
+        description: 'Здание не найдено',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'error', type: 'string', example: 'not found')
+            ]
+        )
+    )]
     public function update(string $id, Request $req): JsonResponse {
         $b = $this->em->getRepository(Building::class)->find($id);
         if (!$b) return $this->json(['error' => 'not found'], 404);
@@ -106,6 +243,35 @@ class BuildingController extends AbstractController
     }
 
     #[Route('/{id}', methods: ['DELETE'])]
+    #[OA\Delete(
+        summary: 'Удалить здание',
+        description: 'Удаляет запись о здании по указанному ID'
+    )]
+    #[OA\Parameter(
+        name: 'id',
+        description: 'UUID здания',
+        in: 'path',
+        required: true,
+        schema: new OA\Schema(type: 'string', format: 'uuid')
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Здание успешно удалено',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'ok', type: 'boolean', example: true)
+            ]
+        )
+    )]
+    #[OA\Response(
+        response: 404,
+        description: 'Здание не найдено',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'error', type: 'string', example: 'not found')
+            ]
+        )
+    )]
     public function delete(string $id): JsonResponse {
         $b = $this->em->getRepository(Building::class)->find($id);
         if (!$b) return $this->json(['error' => 'not found'], 404);

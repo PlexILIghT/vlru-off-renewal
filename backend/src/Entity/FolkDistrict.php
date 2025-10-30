@@ -17,8 +17,20 @@ use Symfony\Component\Uid\Uuid;
 #[ApiResource(
     operations: [
         new GetCollection(normalizationContext: ['groups' => ['folk_district:list']]),
+        new Post(denormalizationContext: ['groups' => ['folk_district:write']]),
         new Get(normalizationContext: ['groups' => ['folk_district:detail']]),
+        new Put(denormalizationContext: ['groups' => ['folk_district:write']]),
+        new Delete(),
     ]
+)]#[ApiResource(
+    operations: [
+        new GetCollection(normalizationContext: ['groups' => ['folk_district:list']]),
+        new Post(denormalizationContext: ['groups' => ['folk_district:write']]),
+        new Get(normalizationContext: ['groups' => ['folk_district:detail']]),
+        new Put(denormalizationContext: ['groups' => ['folk_district:write']]),
+        new Delete(),
+    ],
+    routePrefix: '/api'
 )]
 class FolkDistrict
 {

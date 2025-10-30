@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit FolkDistrict{% endblock %}
+
+{% block body %}
+    <h1>Edit FolkDistrict</h1>
+
+    {{ include('folk_district/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_folk_district_index') }}">back to list</a>
+
+    {{ include('folk_district/_delete_form.html.twig') }}
+{% endblock %}
