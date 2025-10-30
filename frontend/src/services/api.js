@@ -1,22 +1,18 @@
 const API_BASE = '/api';
 
 export const api = {
-    async getOrganizations() {
-        const response = await fetch(`${API_BASE}/organizations`);
-        return await response.json();
-    },
 
     async getHouses() {
         const response = await fetch(`${API_BASE}/buildings`);
         const buildings = await response.json();
 
-        // Преобразуем buildings в houses формат
+        // Костыль: Преобразуем buildings в houses формат
         return buildings.map(building => ({
             id: building.id,
             address: this.formatBuildingAddress(building),
-            organization: building.organization, // нужно добавить связь в бэкенде
+            organization: building.initiatorName,
             hotWaterStatus: 'connected',
-            heatingStatus: 'connected',
+            heatStatus: 'connected',
             coldWaterStatus: 'connected'
         }));
     },

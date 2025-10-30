@@ -29,8 +29,9 @@ use Symfony\Component\Uid\Uuid;
 class District
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
     #[ORM\Column(type: 'uuid')]
+    #[ORM\GeneratedValue(strategy: "CUSTOM")]
+    #[ORM\CustomIdGenerator(class: "Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator")]
     private ?Uuid $id = null;
 
     #[ORM\Column(length: 255)]

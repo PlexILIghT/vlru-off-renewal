@@ -31,7 +31,7 @@ const loadCurrentStats = async () => {
       cold_water: activeOutages.filter(o => o.outageType === 'cold_water').length,
       hot_water: activeOutages.filter(o => o.outageType === 'hot_water').length,
       electricity: activeOutages.filter(o => o.outageType === 'electricity').length,
-      heating: activeOutages.filter(o => o.outageType === 'heating').length
+      heating: activeOutages.filter(o => o.outageType === 'heat').length
     };
 
     activeOutages.forEach(outage => {

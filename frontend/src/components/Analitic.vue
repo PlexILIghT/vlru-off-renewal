@@ -77,6 +77,7 @@ export default {
     const loadData = async () => {
       try {
         outagesData.value = await api.getOutages();
+        const activeOutages = await api.getActiveOutages();
         // outagesData.value = await mockApi.getOutages();
         await generateAnalyticsData();
         updateStats();
@@ -91,7 +92,7 @@ export default {
     const updateStats = () => {
       const periodData = analyticsData.value[selectedPeriod.value];
       stats.totalOutages = periodData ? periodData.reduce((total, bar) => total + bar.total, 0) : 0;
-      stats.activeOutages = outagesData.value.filter(outage => outage.status === 'active').length;
+      stats.activeOutages = outagesData.value.length;
       stats.affectedHouses = periodData ? periodData.reduce((total, bar) => total + bar.affectedHouses, 0) : 0;
     };
 

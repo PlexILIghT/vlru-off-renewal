@@ -29,10 +29,10 @@ use Symfony\Component\Uid\Uuid;
 class BigFolkDistrict
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
     #[ORM\Column(type: 'uuid')]
+    #[ORM\GeneratedValue(strategy: "CUSTOM")]
+    #[ORM\CustomIdGenerator(class: "Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator")]
     private ?Uuid $id = null;
-
     #[ORM\Column(length: 255)]
     #[Groups(['big_folk_district:list', 'big_folk_district:detail'])]
     private ?string $name = null;
@@ -88,5 +88,17 @@ class BigFolkDistrict
         $this->id = $id;
 
         return $this;
+    }
+
+    public function setName(string $param): static
+    {
+        $this->name = $param;
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
     }
 }
