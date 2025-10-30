@@ -1,9 +1,15 @@
-# VLRU-OFF Redesign Project
+# VLru-OFF Redesign Project
 
 ## Built on
 - PHP/Symfony 8.4/7.3 REST API
 - Vue.js 3 frontend
 - python 3.13 FastAPI ML Microservice
+
+*services communcation*
+<img width="561" height="431" alt="Scheme drawio" src="https://github.com/user-attachments/assets/056ac001-13c2-4a5d-8f01-f1fc045c40b0" />
+
+*DB Scheme*
+<img width="561" height="537" alt="image_2025-10-31_07-46-02" src="https://github.com/user-attachments/assets/d8d400fe-d9bf-408c-9c35-f107f16a1438" />
 
 ## Table of Contents
 - [Installation](#installation)
@@ -15,7 +21,13 @@
     - [Frontend](#frontend)
 - [Docker Development](#docker-development)
 - [Tools](#tools)
+
 ## Installation
+
+### **!!!important!!!**
+If you see this here, then you need to download files from this [Google Drive](https://drive.google.com/drive/folders/1Dc3PtGoSADKMINf0exuZIXvfly5JbND7?usp=sharing) and put them into ```.predict/``` in order to get current configuration working.
+
+---
 
 ### Windows
 
@@ -138,3 +150,4 @@ TODO
 
 ## Scripts
 TODO
+
